@@ -7,7 +7,8 @@ class Personnage
           $nom,
           $xp ,
           $level ,
-          $strength ;
+          $strength,
+          $category;
   
   const CEST_MOI = 1; // Constante renvoyée par la méthode `frapper` si on se frappe soi-même.
   const PERSONNAGE_TUE = 2; // Constante renvoyée par la méthode `frapper` si on a tué le personnage en le frappant.
@@ -91,6 +92,11 @@ class Personnage
     return $this->strength;
   }
   
+  public function category()
+  {
+    return $this->category;         //---------------------------MAGICIEN GUERRIER ET ARCHER ----------------------------------//
+  }
+
   public function setDegats($degats)
   {
     $degats = (int) $degats;
@@ -140,5 +146,10 @@ class Personnage
   {
     $this->strength =  $strength;
     
+  }
+
+  public function setCategory($category)
+  {
+    $this->category = $category;
   }
 }

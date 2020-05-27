@@ -11,8 +11,9 @@ class PersonnagesManager
   
   public function add(Personnage $perso)
   {
-    $q = $this->db->prepare('INSERT INTO personnages(nom) VALUES(:nom)');
+    $q = $this->db->prepare('INSERT INTO personnages(nom,category) VALUES(:nom, :category)');
     $q->bindValue(':nom', $perso->nom());
+    $q->bindValue(':category', $perso->category());
     $q->execute();
     
     $perso->hydrate([
@@ -21,6 +22,7 @@ class PersonnagesManager
       'xp' => 0,
       'level' => 0,
       'strength' => 0,
+      'category' => $perso->category(),
     ]);
   }
   
@@ -53,14 +55,14 @@ class PersonnagesManager
   {
     if (is_int($info))
     {
-      $q = $this->db->query('SELECT id, nom, degats, xp, level, strength FROM personnages WHERE id = '.$info);
+      $q = $this->db->query('SELECT id, nom, degats, xp, level, strength, category FROM personnages WHERE id = '.$info);
       $donnees = $q->fetch(PDO::FETCH_ASSOC);
       
       return new Personnage($donnees);
     }
     else
     {
-      $q = $this->db->prepare('SELECT id, nom, degats, xp, level, strength FROM personnages WHERE nom = :nom');
+      $q = $this->db->prepare('SELECT id, nom, degats, xp, level, strength, category FROM personnages WHERE nom = :nom');
       $q->execute([':nom' => $info]);
     
       return new Personnage($q->fetch(PDO::FETCH_ASSOC));
@@ -71,7 +73,7 @@ class PersonnagesManager
   {
     $persos = [];
     
-    $q = $this->db->prepare('SELECT id, nom, degats, xp, level, strength FROM personnages WHERE nom <> :nom ORDER BY nom');
+    $q = $this->db->prepare('SELECT id, nom, degats, xp, level, strength, category FROM personnages WHERE nom <> :nom ORDER BY nom');
     $q->execute([':nom' => $nom]);
     
     while ($donnees = $q->fetch(PDO::FETCH_ASSOC))
