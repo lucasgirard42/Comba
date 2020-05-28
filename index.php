@@ -23,11 +23,18 @@
     exit();
   }
 
+  
+
   // On fait appel à la connexion à la bdd
   require 'config/init.php';
 
   // On fait appel à le code métier
   require 'combat.php';
+
+  
+    
+    
+  
 ?>
 <!DOCTYPE html>
 <html>
@@ -44,7 +51,7 @@
     
   </head>
   <body>
-    <p>Nombre de personnages créés : <?= $manager->count() ?></p>
+    <p class="text-center">Nombre de personnages créés : <?= $manager->count() ?></p>
 <?php
   // On a un message à afficher ?
   if (isset($message)) {
@@ -52,11 +59,24 @@
   }
   // Si on utilise un personnage (nouveau ou pas).
   if (isset($perso)) {
-?>
-    <p><a href="?deconnexion=1">Déconnexion</a></p>
+    switch($perso->category()){
+      case "magicien":
+      $couleur="bg-info";
+      break;
+      case "guerrier":
+      $couleur="bg-danger";
+      break;
+      case "archer":
+      $couleur="bg-success";
+      break;
+      
+  }
 
-    <div class="card m-auto" style="width: 18rem;">
-          <div class="card-body m-auto">
+?>
+    <p class="text-center"><a href="?deconnexion=1">Déconnexion</a></p>
+
+    <div class="card shadow p-3 m-auto <?php echo $couleur ?>" style="width: 18rem;">
+          <div class="card-body m-auto" >
             <h5 class="card-title"><?= htmlspecialchars($perso->nom()) ?></h5>
             <fieldset class="card-text">
               <legend>Mes informations</legend>
@@ -93,23 +113,33 @@
           else { ?>
 
             <?php foreach ($persos as $unPerso)
-            { ?>
-            <div class="card mb-5 " style="width: 18rem;">
+            { 
+              switch($unPerso->category()){
+                case "magicien":
+                $couleur="bg-info";
+                break;
+                case "guerrier":
+                $couleur="bg-danger";
+                break;
+                case "archer":
+                $couleur="bg-success";
+                break;
+                
+            }?>
+            <div class="card mb-5 shadow p-3 <?= $couleur?>" style="width: 18rem;">
               <div class="card-body">
                   <h5 class="card-title"></h5>
                   <p class="card-text">
-                  <?php echo '<a href="?frapper=', $unPerso->id(), '">',
-                htmlspecialchars($unPerso->nom()),
-              '</a> (dégâts : ', $unPerso->degats(),
-              ' level : ',
-              htmlspecialchars($unPerso->level()),
-              ' force : ',
-              htmlspecialchars($unPerso->strength()), ')<br />',
-              'classe : ',
-              htmlspecialchars($unPerso->category());
-              ?>
+                  <?php echo htmlspecialchars($unPerso->nom()),
+                      '</a> (dégâts : ', $unPerso->degats(),
+                      ' level : ',
+                      htmlspecialchars($unPerso->level()),
+                      ' force : ',
+                      htmlspecialchars($unPerso->strength()), ')<br />',
+                      'classe : ',
+                      htmlspecialchars($unPerso->category());?>
                   </p>
-                  <a href="" class="btn btn-primary">frapper</a>
+                  <a href="?frapper=<?=$unPerso->id()?>" class="btn btn-primary">frapper</a>
               </div>
             </div>
 
