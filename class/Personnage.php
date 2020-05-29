@@ -1,14 +1,14 @@
 <?php
 
-class Personnage
+abstract class Personnage
 {
-  private $degats,
+  protected $degats,
           $id,
           $nom,
           $xp ,
           $level ,
-          $strength,
-          $category;
+          $strength;
+         
   
   const CEST_MOI = 1; // Constante renvoyée par la méthode `frapper` si on se frappe soi-même.
   const PERSONNAGE_TUE = 2; // Constante renvoyée par la méthode `frapper` si on a tué le personnage en le frappant.
@@ -20,19 +20,7 @@ class Personnage
     $this->hydrate($donnees);
   }
   
-  public function frapper(Personnage $perso)
-  {
-    if($perso->id() == $this->id)
-    {
-      return self::CEST_MOI;
-    }
 
-    $this->xp += 25;
-    // On indique au personnage qu'il doit recevoir des dégâts.
-    // Puis on retourne la valeur renvoyée par la méthode : self::PERSONNAGE_TUE ou self::PERSONNAGE_FRAPPE
-    return $perso->recevoirDegats();
-  }
-  
   public function hydrate(array $donnees)
   {
     foreach ($donnees as $key => $value)
@@ -45,20 +33,15 @@ class Personnage
       }
     }
   }
+
+
+  abstract public function frapper(Personnage $perso);
   
-  public function recevoirDegats()
-  {
-    $this->degats +=5 ;
-    
-    // Si on a 100 de dégâts ou plus, on dit que le personnage a été tué.
-    if($this->degats >= 100)
-    {
-      return self::PERSONNAGE_TUE;
-    }
-    
-    // Sinon, on se contente de dire que le personnage a bien été frappé.
-    return self::PERSONNAGE_FRAPPE;
-  }
+  
+ 
+  
+  abstract public function recevoirDegats($categoryAttaquant, $forceAttaquant);
+  
   
   
   // GETTERS //
@@ -92,11 +75,11 @@ class Personnage
     return $this->strength;
   }
   
-  public function category()
-  {
-    return $this->category;         //---------------------------MAGICIEN GUERRIER ET ARCHER ----------------------------------//
-  }
+  
 
+
+
+  //------SETTERS--------------------------//
   public function setDegats($degats)
   {
     $degats = (int) $degats;
@@ -124,12 +107,7 @@ class Personnage
       $this->nom = $nom;
     }
   }
-  public function nomValide()
-  {
-      if($this->nom != "") {
-          return true;
-      }
-  }
+  
 
   public function setXp($xp)
   {
@@ -148,8 +126,16 @@ class Personnage
     
   }
 
-  public function setCategory($category)
-  {
-    $this->category = $category;
-  }
+  
+
+  public function nomValide()
+   {
+       if($this->nom != "") {
+           return true;
+       }
+   }
+
+
 }
+
+

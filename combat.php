@@ -9,9 +9,23 @@ if (isset($_SESSION['perso'])) {
 }
 
 // Si on a voulu créer un personnage.
-if (isset($_POST['creer']) && isset($_POST['nom'])) {
+if (isset($_POST['creer']) && isset($_POST['nom']) && isset($_POST['category'])) {
   // On crée un nouveau personnage.
-  $perso = new Personnage(['nom' => $_POST['nom'],'category'=>$_POST['category']]); 
+  switch ($_POST['category']) {
+    case 'guerrier':
+      $perso = new Guerrier(['nom' => $_POST['nom'],'category'=>$_POST['category']]);
+      break;
+    
+    case 'archer':
+      $perso = new Archer(['nom' => $_POST['nom'],'category'=>$_POST['category']]);
+      break;
+
+    case 'magicien':
+      $perso = new Magicien(['nom' => $_POST['nom'],'category'=>$_POST['category']]);
+      break;
+    
+  }
+ 
   // Si le nom est invalide (string vide) on revoit une erreur
   if (!$perso->nomValide()) {
     $message = 'Le nom choisi est invalide.';

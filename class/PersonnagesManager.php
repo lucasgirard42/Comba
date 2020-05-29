@@ -57,15 +57,46 @@ class PersonnagesManager
     {
       $q = $this->db->query('SELECT id, nom, degats, xp, level, strength, category FROM personnages WHERE id = '.$info);
       $donnees = $q->fetch(PDO::FETCH_ASSOC);
+           
+      switch ($donnees['category']) {
+        case 'guerrier':
+          
+          return new Guerrier($donnees);
+          break;
+        
+        case 'archer':
+          return new Archer($donnees);
+          break;
+    
+        case 'magicien':
+          return new Magicien($donnees);
+          break;
+        
+      }
       
-      return new Personnage($donnees);
     }
     else
     {
       $q = $this->db->prepare('SELECT id, nom, degats, xp, level, strength, category FROM personnages WHERE nom = :nom');
       $q->execute([':nom' => $info]);
     
-      return new Personnage($q->fetch(PDO::FETCH_ASSOC));
+      $donnees = $q->fetch(PDO::FETCH_ASSOC);
+           
+      switch ($donnees['category']) {
+        case 'guerrier':
+          
+          return new Guerrier($donnees);
+          break;
+        
+        case 'archer':
+          return new Archer($donnees);
+          break;
+    
+        case 'magicien':
+          return new Magicien($donnees);
+          break;
+        
+      };
     }
   }
   
@@ -78,7 +109,22 @@ class PersonnagesManager
     
     while ($donnees = $q->fetch(PDO::FETCH_ASSOC))
     {
-      $persos[] = new Personnage($donnees);
+      // $persos[] = new Personnage($donnees);
+      switch ($donnees['category']) {
+        case 'guerrier':
+          
+          $persos[] = new Guerrier($donnees);
+          break;
+        
+        case 'archer':
+          $persos[] = new Archer($donnees);
+          break;
+    
+        case 'magicien':
+          $persos[] = new Magicien($donnees);
+          break;
+        
+      };
     }
     
     return $persos;
@@ -96,7 +142,7 @@ class PersonnagesManager
     $q = $this->db->prepare('UPDATE personnages SET xp = :xp, level = :level, strength = :strength, degats = :degats WHERE id = :id');
     
     $q->bindValue(':xp', $perso->xp(), PDO::PARAM_INT);
-    $q->bindValue(':degats', ($perso->degats() + $strength), PDO::PARAM_INT);
+    $q->bindValue(':degats', ($perso->degats()), PDO::PARAM_INT);
     $q->bindValue(':level', $perso->level(), PDO::PARAM_INT);
     $q->bindValue(':strength', $perso->strength(), PDO::PARAM_INT);
     $q->bindValue(':id', $perso->id(), PDO::PARAM_INT);
